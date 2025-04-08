@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Receipt{% endblock %}
+
+{% block content %}
+<h1>Receipt Scanner</h1>
+<form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+    <div class="form-group">
+        <label for="source_account">Source Account:</label>
+        <select id="source_account" name="source_account" required>
+            {% for account in asset_accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="camera-container">
+        <video id="camera-preview" autoplay playsinline></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <div class="camera-buttons">
+            <button type="button" class="camera-btn start-camera" id="startCamera">Take Photo</button>
+            <button type="button" class="camera-btn capture" id="capture">Capture</button>
+            <button type="button" class="camera-btn retake" id="retake">Retake</button>
+        </div>
+    </div>
+
+    <div class="or-divider"><span>OR</span></div>
+
+    <div class="form-group">
+        <label for="file">Upload Receipt:</label>
+        <input type="file" id="file" name="file" accept="image/*" capture="environment">
+    </div>
+
+    <button type="submit" id="submit-btn" class="btn">Extract Receipt Data</button>
+</form>
+
+<div id="loading" class="loading">
+    <p>Processing receipt... This may take a minute. Please don't close this page.</p>
+    <p>If this takes too long, you can try again with a smaller or clearer image.</p>
+</div>
+
+{% if success_message %}
+<div class="success">
+    {{ success_message }}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function showLoading() {
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('submit-btn').disabled = true;
+    }
+</script>
+{% endblock %} 

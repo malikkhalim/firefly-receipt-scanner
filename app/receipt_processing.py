@@ -1,15 +1,18 @@
+import os
+import time
+from datetime import datetime
+
+from dotenv import load_dotenv
 from fastapi import UploadFile
 from google import genai
-from .models import ReceiptModel
+
 from .firefly import (
-    get_firefly_categories,
-    get_firefly_budgets,
     create_firefly_transaction,
+    get_firefly_budgets,
+    get_firefly_categories,
 )
-from datetime import datetime
-import time
-import os
-from dotenv import load_dotenv
+from .image_utils import process_image
+from .models import ReceiptModel
 
 # Load environment variables
 load_dotenv()
@@ -27,20 +30,43 @@ async def extract_receipt_data(file: UploadFile):
     # Create a temporary file with a unique name
     temp_file = None
     try:
+        print(f"Processing image: {file.filename}")
+
+        # Process the image (resize and compress with more aggressive settings)
+        processed_image_bytes, original_filename = await process_image(
+            file, max_size=(400, 400), quality=70
+        )
+        print(f"Image processed, size: {len(processed_image_bytes)} bytes")
+
         # Create a temporary file with the same extension as the original
-        file_ext = os.path.splitext(file.filename)[1]
+        file_ext = os.path.splitext(original_filename)[1]
         temp_file = f"/tmp/receipt_{int(time.time())}{file_ext}"
+        print(f"Created temporary file: {temp_file}")
 
-        # Write the file content to the temporary file
+        # Write the processed image to the temporary file
         with open(temp_file, "wb") as f:
-            f.write(await file.read())
+            f.write(processed_image_bytes)
+        print("Image written to temporary file")
 
-        # Upload file via genai client
-        receipt_img = client.files.upload(file=temp_file)
+        # Upload file via genai client with a shorter timeout
+        try:
+            print("Uploading to Gemini...")
+            receipt_img = client.files.upload(file=temp_file)
+            print("Upload successful")
+        except Exception as e:
+            print(f"Error during Gemini upload: {str(e)}")
+            print(f"Error type: {type(e)}")
+            raise TimeoutError(
+                f"Failed to upload the image to the AI service. Error: {str(e)}"
+            ) from e
 
         # Fetch dynamic data from Firefly III
+        print("Fetching categories and budgets...")
         categories = get_firefly_categories()
         budgets = get_firefly_budgets()
+        print(
+            f"Found {len(categories) if categories else 0} categories and {len(budgets) if budgets else 0} budgets"
+        )
 
         # If we couldn't fetch categories or budgets, use default values
         if not categories:
@@ -69,22 +95,36 @@ async def extract_receipt_data(file: UploadFile):
             "5) date (in YYYY-MM-DD format)."
         )
 
-        # Generate receipt details using genai.
-        gemini_response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=[receipt_prompt, receipt_img],
-            config={
-                "response_mime_type": "application/json",
-                "response_schema": ReceiptModel,
-            },
-        )
+        # Set a shorter timeout for the API call
+        try:
+            print("Sending request to Gemini for analysis...")
+            # Generate receipt details using genai with a shorter timeout
+            gemini_response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=[receipt_prompt, receipt_img],
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": ReceiptModel,
+                },
+            )
+            print("Received response from Gemini")
+        except Exception as e:
+            print(f"Error during Gemini analysis: {str(e)}")
+            print(f"Error type: {type(e)}")
+            if "timeout" in str(e).lower():
+                raise TimeoutError(
+                    "The image processing timed out. Please try again with a smaller or clearer image."
+                )
+            raise e
 
         # Validate and format the date
         try:
+            print(f"Validating date: {gemini_response.parsed.date}")
             # Try to parse the date to ensure it's valid
             date_obj = datetime.strptime(gemini_response.parsed.date, "%Y-%m-%d")
             # Format it back to the expected format
             gemini_response.parsed.date = date_obj.strftime("%Y-%m-%d")
+            print("Date validation successful")
         except ValueError:
             # If the date is invalid, use the current date
             print(
@@ -102,15 +142,20 @@ async def extract_receipt_data(file: UploadFile):
             "available_categories": categories,
             "available_budgets": budgets,
         }
-
+        print("Successfully extracted all data")
         return extracted_data
+    except Exception as e:
+        print(f"Unexpected error in extract_receipt_data: {str(e)}")
+        print(f"Error type: {type(e)}")
+        raise
     finally:
         # Clean up the temporary file
         if temp_file and os.path.exists(temp_file):
             try:
                 os.remove(temp_file)
+                print(f"Cleaned up temporary file: {temp_file}")
             except Exception as e:
-                print(f"Error removing temporary file {temp_file}: {e}")
+                print(f"Error removing temporary file: {e}")
 
 
 async def create_transaction_from_data(receipt_data, source_account):

@@ -1,6 +1,7 @@
 import io
-from PIL import Image
+
 from fastapi import UploadFile
+from PIL import Image
 
 
 async def process_image(file: UploadFile, max_size=(512, 512), quality=85):
@@ -28,7 +29,7 @@ async def process_image(file: UploadFile, max_size=(512, 512), quality=85):
     # Resize the image while maintaining aspect ratio
     img.thumbnail(max_size, Image.LANCZOS)
 
-    # Save the processed image to a bytes buffer
+    # Save the processed image to a bytes buffer with aggressive compression
     output_buffer = io.BytesIO()
     img.save(output_buffer, format="JPEG", quality=quality, optimize=True)
 
