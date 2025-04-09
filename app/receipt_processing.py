@@ -27,38 +27,12 @@ client = genai.Client(api_key=GOOGLE_AI_API_KEY)
 
 async def extract_receipt_data(file: UploadFile):
     """Extract data from the receipt image without creating a transaction."""
-    # Create a temporary file with a unique name
-    temp_file = None
     try:
         print(f"Processing image: {file.filename}")
 
         # Process the image (resize and compress with more aggressive settings)
-        processed_image_bytes, original_filename = await process_image(
-            file, max_size=(400, 400), quality=70
-        )
-        print(f"Image processed, size: {len(processed_image_bytes)} bytes")
-
-        # Create a temporary file with the same extension as the original
-        file_ext = os.path.splitext(original_filename)[1]
-        temp_file = f"/tmp/receipt_{int(time.time())}{file_ext}"
-        print(f"Created temporary file: {temp_file}")
-
-        # Write the processed image to the temporary file
-        with open(temp_file, "wb") as f:
-            f.write(processed_image_bytes)
-        print("Image written to temporary file")
-
-        # Upload file via genai client with a shorter timeout
-        try:
-            print("Uploading to Gemini...")
-            receipt_img = client.files.upload(file=temp_file)
-            print("Upload successful")
-        except Exception as e:
-            print(f"Error during Gemini upload: {str(e)}")
-            print(f"Error type: {type(e)}")
-            raise TimeoutError(
-                f"Failed to upload the image to the AI service. Error: {str(e)}"
-            ) from e
+        image = await process_image(file, max_size=(768, 768))
+        print("Image processed and encoded to base64")
 
         # Fetch dynamic data from Firefly III
         print("Fetching categories and budgets...")
@@ -92,7 +66,7 @@ async def extract_receipt_data(file: UploadFile):
             + "), "
             "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
             "4) destination account (store name) "
-            "5) date (in YYYY-MM-DD format)."
+            "5) date (in YYYY-MM-DD format). On a receipt it is usually written in DD-MM-YYYY format."
         )
 
         # Set a shorter timeout for the API call
@@ -101,7 +75,10 @@ async def extract_receipt_data(file: UploadFile):
             # Generate receipt details using genai with a shorter timeout
             gemini_response = client.models.generate_content(
                 model="gemini-2.0-flash",
-                contents=[receipt_prompt, receipt_img],
+                contents=[
+                    receipt_prompt,
+                    image,
+                ],
                 config={
                     "response_mime_type": "application/json",
                     "response_schema": ReceiptModel,
@@ -148,14 +125,6 @@ async def extract_receipt_data(file: UploadFile):
         print(f"Unexpected error in extract_receipt_data: {str(e)}")
         print(f"Error type: {type(e)}")
         raise
-    finally:
-        # Clean up the temporary file
-        if temp_file and os.path.exists(temp_file):
-            try:
-                os.remove(temp_file)
-                print(f"Cleaned up temporary file: {temp_file}")
-            except Exception as e:
-                print(f"Error removing temporary file: {e}")
 
 
 async def create_transaction_from_data(receipt_data, source_account):

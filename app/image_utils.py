@@ -1,10 +1,11 @@
+import base64
 import io
 
 from fastapi import UploadFile
 from PIL import Image
 
 
-async def process_image(file: UploadFile, max_size=(512, 512), quality=85):
+async def process_image(file: UploadFile, max_size=(768, 768)):
     """
     Process an uploaded image by resizing it to the specified dimensions and compressing it.
 
@@ -14,7 +15,7 @@ async def process_image(file: UploadFile, max_size=(512, 512), quality=85):
         quality: JPEG quality (1-100) for compression
 
     Returns:
-        A tuple containing (processed_image_bytes, original_filename)
+        A tuple containing (base64_encoded_image, original_filename)
     """
     # Read the uploaded file
     contents = await file.read()
@@ -29,14 +30,6 @@ async def process_image(file: UploadFile, max_size=(512, 512), quality=85):
     # Resize the image while maintaining aspect ratio
     img.thumbnail(max_size, Image.LANCZOS)
 
-    # Save the processed image to a bytes buffer with aggressive compression
-    output_buffer = io.BytesIO()
-    img.save(output_buffer, format="JPEG", quality=quality, optimize=True)
 
-    # Get the processed image bytes
-    processed_image_bytes = output_buffer.getvalue()
 
-    # Get the original filename
-    original_filename = file.filename
-
-    return processed_image_bytes, original_filename
+    return img
