@@ -66,7 +66,11 @@ async def extract_receipt_data(file: UploadFile):
             + "), "
             "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
             "4) destination account (store name) "
-            "5) date (in YYYY-MM-DD format). On a receipt it is usually written in DD-MM-YYYY format."
+            "5) date (in YYYY-MM-DD format). Today's date is "
+            + datetime.now().strftime("%Y-%m-%d")
+            + ". "
+            "Most receipts are from the past few days, so use today's date as a reference point when interpreting dates. "
+            "If the date is not on the receipt, use today's date as the default."
         )
 
         # Set a shorter timeout for the API call
