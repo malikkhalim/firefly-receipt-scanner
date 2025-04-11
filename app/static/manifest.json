@@ -1,0 +1,16 @@
+{
+    "name": "Receipt Scanner",
+    "short_name": "Receipt Scanner",
+    "description": "Scan receipts and create transactions in Firefly III",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f5f5f5",
+    "theme_color": "#3498db",
+    "icons": [
+        {
+            "src": "images/favicon_resized.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        }
+    ]
+} 
