@@ -1,4 +1,5 @@
 import os
+import sys
 
 from fastapi import (
     FastAPI,
@@ -12,10 +13,30 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .firefly import get_firefly_asset_accounts
+from .firefly import get_firefly_asset_accounts, get_firefly_categories
 from .receipt_processing import create_transaction_from_data, extract_receipt_data
 
+
+def test_firefly_connection():
+    """Test the connection to Firefly III by attempting to fetch categories."""
+    try:
+        categories = get_firefly_categories()
+        if categories is None:
+            print("Error: Could not connect to Firefly III. Categories returned None.")
+            return False
+        print("Successfully connected to Firefly III")
+        return True
+    except Exception as e:
+        print(f"Error connecting to Firefly III: {str(e)}")
+        return False
+
+
 app = FastAPI(title="Receipt to Firefly III")
+
+# Test Firefly III connection before proceeding
+if not test_firefly_connection():
+    print("Failed to establish connection to Firefly III. Exiting...")
+    sys.exit(1)
 
 # Add trusted host middleware to handle forwarded headers
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])

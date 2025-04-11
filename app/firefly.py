@@ -1,14 +1,15 @@
-import requests
 import json
-from datetime import datetime
 import os
+from datetime import datetime
+
+import requests
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
 # Firefly III configuration
-FIREFLY_III_URL = os.getenv("FIREFLY_III_URL", "http://localhost:8080/api/v1")
+FIREFLY_III_URL = os.getenv("FIREFLY_III_URL")
 FIREFLY_III_TOKEN = os.getenv("FIREFLY_III_TOKEN")
 
 # Validate required environment variables
@@ -16,7 +17,7 @@ if not FIREFLY_III_TOKEN:
     raise ValueError("FIREFLY_III_TOKEN environment variable is not set")
 
 # Increase timeout for all requests
-TIMEOUT = 60  # Increased from 30 to 60 seconds
+TIMEOUT = 30  # Increased from 30 to 60 seconds
 
 
 def get_firefly_categories():

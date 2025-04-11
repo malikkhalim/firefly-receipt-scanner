@@ -1,4 +1,3 @@
-import base64
 import io
 
 from fastapi import UploadFile
@@ -29,7 +28,5 @@ async def process_image(file: UploadFile, max_size=(768, 768)):
 
     # Resize the image while maintaining aspect ratio
     img.thumbnail(max_size, Image.LANCZOS)
-
-
 
     return img
