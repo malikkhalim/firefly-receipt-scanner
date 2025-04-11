@@ -6,7 +6,8 @@ A web application that allows you to scan receipts and automatically create tran
 
 Check out the demo video below to see the Receipt Scanner in action:
 
-![Demo Video](docs/images/demo_video.mp4)
+
+https://github.com/user-attachments/assets/ec41d8dc-71e9-4aa4-b65c-869c3dd54845
 
 ## Features
 
