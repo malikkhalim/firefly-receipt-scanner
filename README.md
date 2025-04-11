@@ -2,13 +2,19 @@
 
 A web application that allows you to scan receipts and automatically create transactions in Firefly III.
 
+## Demo
+
+Check out the demo video below to see the Receipt Scanner in action:
+
+![Demo Video](docs/images/demo_video.mp4)
+
 ## Features
 
 - Upload and scan receipts using Google's Gemini AI
 - Extract key information: date, amount, store name, category, and budget
 - Review and edit extracted data before creating transactions
 - Create transactions in Firefly III with a single click
-- Resize and compress images for faster processing
+- Mobile-friendly interface for scanning receipts on the go
 
 ## Prerequisites
 
@@ -38,6 +44,15 @@ A web application that allows you to scan receipts and automatically create tran
    # Google AI API Configuration
    GOOGLE_AI_API_KEY=your-google-ai-api-key
    ```
+   
+### Requesting Firefly III Token
+
+   To use this application, you'll need a personal access token for Firefly III. Follow the instructions in the official documentation to generate one: [Firefly III API - Personal Access Tokens](https://docs.firefly-iii.org/how-to/firefly-iii/features/api/#personal-access-tokens)
+
+### Requesting a Gemini API Key
+   To use Google's Gemini AI, you'll need an API key. Visit the following URL to request one: [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+
+   You will be asked to enter a credit card for verification purposes, but personal usage will most likely fall within the free tier.
 
 ## Deployment
 
@@ -63,12 +78,24 @@ A web application that allows you to scan receipts and automatically create tran
    ```
 
 ## Usage
+   1. Open the application in your web browser
+   2. Select a source account from the dropdown menu
+   3. Use the camera to take a photo of your receipt
+   4. Review and edit the extracted data
+   5. Click "Create Transaction" to create the transaction in Firefly III
 
-1. Open the application in your web browser
-2. Select a source account from the dropdown menu
-3. Upload a receipt image
-4. Review and edit the extracted data
-5. Click "Create Transaction" to create the transaction in Firefly III
+If you're using a phone, consider adding a bookmark of the app to your home screen for easier access.
+![iPhone Usage](docs/images/bookmark.jpg)
+
+
+
+## Troubleshooting
+
+### Common Issues
+
+- **Image Processing Timeout**: If you receive a timeout error when processing an image, try using a clearer image with better lighting and less glare.
+- **Transaction Creation Failed**: If transaction creation fails, check your Firefly III connection and ensure your API token has the necessary permissions.
+- **Camera Not Working**: Ensure your browser has permission to access your camera. For mobile devices, you may need to use HTTPS.
 
 ## Development
 
@@ -80,12 +107,13 @@ A web application that allows you to scan receipts and automatically create tran
   - `receipt_processing.py` - Receipt data extraction and processing
   - `image_utils.py` - Image processing utilities
   - `models.py` - Data models
+  - `templates/` - HTML templates
+  - `static/` - Static assets (CSS, JavaScript)
 
-### Running Tests
 
-```
-pytest
-```
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
