@@ -15,6 +15,7 @@ https://github.com/user-attachments/assets/ec41d8dc-71e9-4aa4-b65c-869c3dd54845
 - Extract key information: date, amount, store name, category, and budget
 - Review and edit extracted data before creating transactions
 - Create transactions in Firefly III with a single click
+- Automatically adds an `#automated` tag to all created transactions
 - Mobile-friendly interface for scanning receipts on the go
 
 ## Prerequisites
