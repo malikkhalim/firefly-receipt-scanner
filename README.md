@@ -56,6 +56,9 @@ https://github.com/user-attachments/assets/ec41d8dc-71e9-4aa4-b65c-869c3dd54845
    You will be asked to enter a credit card for verification purposes, but personal usage will most likely fall within the free tier.
 
 ## Deployment
+### Security and Deployment Considerations
+
+This application does not include built-in authentication. It is recommended to deploy it within your local network, ideally alongside your Firefly III instance. To securely access the application remotely, consider using a VPN to connect to your local network.
 
 ### Using Docker Compose (Recommended)
 
