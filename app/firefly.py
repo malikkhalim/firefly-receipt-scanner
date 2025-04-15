@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from urllib.parse import urljoin
 
 import requests
 from dotenv import load_dotenv
@@ -9,8 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Firefly III configuration
-FIREFLY_III_URL = os.getenv("FIREFLY_III_URL")
+FIREFLY_III_URL = os.getenv("FIREFLY_III_URL", "").rstrip("/")
 FIREFLY_III_TOKEN = os.getenv("FIREFLY_III_TOKEN")
+API_BASE_PATH = "/api/v1/"
+# Combine base URL with API path once
+API_URL = urljoin(FIREFLY_III_URL, API_BASE_PATH)
 
 # Validate required environment variables
 if not FIREFLY_III_TOKEN:
@@ -21,7 +25,7 @@ TIMEOUT = 30  # Increased from 30 to 60 seconds
 
 
 def get_firefly_categories():
-    url = f"{FIREFLY_III_URL}/categories"
+    url = urljoin(API_URL, "categories")
     headers = {
         "Authorization": f"Bearer {FIREFLY_III_TOKEN}",
         "Accept": "application/json",
@@ -40,7 +44,7 @@ def get_firefly_categories():
 
 
 def get_firefly_budgets():
-    url = f"{FIREFLY_III_URL}/budgets"
+    url = urljoin(API_URL, "budgets")
     headers = {
         "Authorization": f"Bearer {FIREFLY_III_TOKEN}",
         "Accept": "application/json",
@@ -59,7 +63,7 @@ def get_firefly_budgets():
 
 
 def get_firefly_asset_accounts():
-    url = f"{FIREFLY_III_URL}/accounts"
+    url = urljoin(API_URL, "accounts")
     headers = {
         "Authorization": f"Bearer {FIREFLY_III_TOKEN}",
         "Accept": "application/json",
@@ -81,7 +85,7 @@ def get_firefly_asset_accounts():
 
 
 def create_firefly_transaction(receipt, source_account="Cash wallet"):
-    url = f"{FIREFLY_III_URL}/transactions"
+    url = urljoin(API_URL, "transactions")
     headers = {
         "Authorization": f"Bearer {FIREFLY_III_TOKEN}",
         "Accept": "application/json",
@@ -155,7 +159,7 @@ def create_firefly_transaction(receipt, source_account="Cash wallet"):
                 error_data = response.json()
                 if "message" in error_data:
                     error_message += f" - {error_data['message']}"
-            except:
+            except Exception:
                 error_message += f" - {response.text}"
             raise Exception(error_message)
     except requests.exceptions.Timeout:
