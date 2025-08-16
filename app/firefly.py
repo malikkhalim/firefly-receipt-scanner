@@ -25,6 +25,7 @@ def get_firefly_categories(firefly_url: str, firefly_token: str):
         "Accept": "application/json",
     }
     try:
+        print(f"DEBUG: Mencoba terhubung ke URL: {url}") # <-- TAMBAHKAN INI
         response = requests.get(url, headers=headers, timeout=TIMEOUT)
         response.raise_for_status()
         categories_data = response.json()["data"]
@@ -33,6 +34,7 @@ def get_firefly_categories(firefly_url: str, firefly_token: str):
         print("Request to Firefly III timed out when fetching categories")
         return []
     except requests.exceptions.RequestException as e:
+        print(f"DEBUG: Error saat mengambil kategori: {e}") # <-- TAMBAHKAN INI
         print(f"Error fetching categories: {e}")
         return []
 
