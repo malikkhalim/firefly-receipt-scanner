@@ -1,7 +1,7 @@
 /* app/static/css/styles.css */
 
 /* --- Variabel Warna & Pengaturan Dasar --- */
-:root {
+/* :root {
     --primary-color: #4A90E2;
     --primary-hover: #357ABD;
     --secondary-color: #7f8c8d;
@@ -35,10 +35,10 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-}
+} */
 
 /* --- Kontainer Utama --- */
-.container {
+/* .container {
     max-width: 500px;
     width: 100%;
     margin: 0 auto;
@@ -62,10 +62,11 @@ h1 {
     text-align: center;
     margin-bottom: 30px;
     font-size: 16px;
-}
+} */
 
 
 /* --- Formulir --- */
+/* 
 .form-group {
     margin-bottom: 22px;
 }
@@ -98,9 +99,10 @@ input:focus, select:focus {
     border-color: var(--primary-color);
     background-color: var(--card-bg);
     box-shadow: 0 0 0 3px var(--shadow-color);
-}
+} */
 
 /* --- Tombol Unggah File Kustom --- */
+/* 
 .file-upload-wrapper {
     position: relative;
     width: 100%;
@@ -144,10 +146,11 @@ input:focus, select:focus {
     font-size: 14px;
     color: var(--text-dark);
     font-weight: 500;
-}
+} */
 
 
 /* --- Tombol --- */
+/* 
 .btn {
     display: inline-block;
     width: 100%;
@@ -195,10 +198,11 @@ input:focus, select:focus {
     display: flex;
     gap: 15px;
     flex-direction: column;
-}
+} */
 
 
 /* --- Notifikasi (Error, Success) --- */
+/* 
 .alert {
     display: flex;
     align-items: center;
@@ -235,10 +239,11 @@ input:focus, select:focus {
 }
 .success::before {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231d9752" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>');
-}
+} */
 
 
 /* --- Animasi Loading --- */
+/* 
 .loading {
     display: none;
     text-align: center;
@@ -270,16 +275,16 @@ input:focus, select:focus {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
+} */
 
 /* Sembunyikan fitur kamera yang tidak terpakai */
-.camera-container, .or-divider {
+/* .camera-container, .or-divider {
     display: none;
-}
+} */
 
 
 /* --- Responsif --- */
-@media (max-width: 520px) {
+/* @media (max-width: 520px) {
     body {
         padding: 10px;
         align-items: flex-start;
@@ -294,4 +299,4 @@ input:focus, select:focus {
     .button-group {
         flex-direction: column;
     }
-}
+} */

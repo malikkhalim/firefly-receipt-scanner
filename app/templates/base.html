@@ -1,35 +1,97 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>{% block title %}Receipt Scanner{% endblock %}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- iOS specific -->
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="Receipt Scanner">
-        <!-- Android specific -->
-        <meta name="theme-color" content="#3498db">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="application-name" content="Receipt Scanner">
-        <!-- Icons -->
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='images/favicon_32x32.png') }}">
-        <!-- Apple Touch Icons -->
-        <link rel="apple-touch-icon" sizes="144x144" href="{{ url_for('static', path='images/favicon_144x144.png') }}">
-        <link rel="manifest" href="{{ url_for('static', path='manifest.json') }}">
-        <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        {% block extra_head %}{% endblock %}
-    </head>
-    <body>
-        <div class="container">
-            {% block content %}{% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- iOS specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Receipt Scanner">
+    <!-- Android specific -->
+    <meta name="theme-color" content="#3498db">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Receipt Scanner">
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='images/favicon_32x32.png') }}">
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ url_for('static', path='images/favicon_144x144.png') }}">
+    <title>{% block title %}Receipt Scanner{% endblock %}</title>
 
-            {% if request.session.firefly_token %}
-            <div class="form-group" style="margin-top: 20px; margin-bottom: 0;">
-                <a href="/logout" class="btn btn-secondary">Logout</a>
-            </div>
-            {% endif %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-indigo': {
+                            '50': '#f0f5ff',
+                            '100': '#e0eaff',
+                            '200': '#c8d9ff',
+                            '300': '#a3beff',
+                            '400': '#7f9dff',
+                            '500': '#5f7efc',
+                            '600': '#4a65f6',
+                            '700': '#3c52e4',
+                            '800': '#3142b6',
+                            '900': '#2b3994',
+                        },
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0, transform: 'translateY(10px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'float-slow': 'float 15s ease-in-out infinite',
+                        'float-medium': 'float 12s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .flatpickr-calendar {
+            background: #1a202c; /* bg-gray-900 */
+            border-radius: 0.5rem;
+            border: 1px solid #4a5568; /* border-gray-600 */
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300 font-sans antialiased">
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute top-[10%] left-[5%] w-72 h-72 bg-brand-indigo-800 rounded-full opacity-30 filter blur-3xl animate-float-slow"></div>
+        <div class="absolute bottom-[10%] right-[5%] w-96 h-96 bg-purple-800 rounded-full opacity-30 filter blur-3xl animate-float-medium"></div>
+    </div>
+
+    <main class="w-full min-h-screen flex flex-col justify-center items-center p-4">
+        <div class="w-full max-w-md bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl p-6 sm:p-8 animate-fade-in">
+            {% block content %}{% endblock %}
         </div>
-        {% block extra_scripts %}{% endblock %}
-    </body>
-</html> 
+
+        {% if request.session.firefly_token %}
+        <div class="mt-6">
+            <a href="/logout" class="text-sm text-slate-500 hover:text-slate-300 transition-colors">Logout</a>
+        </div>
+        {% endif %}
+    </main>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

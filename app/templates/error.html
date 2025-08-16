@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Error{% endblock %}
 {% block content %}
-<h1>An Error Occurred</h1>
-<div class="alert error">
-    <p>{{ error_message }}</p>
-</div>
-<div class="form-group">
-    <a href="/" class="btn">Return to Upload</a>
+<div class="text-center">
+    <h1 class="text-3xl font-bold text-red-400 tracking-tight">An Error Occurred</h1>
+    <div class="p-4 my-4 text-sm text-red-300 border border-red-700 rounded-lg bg-red-900/50">
+        {{ error_message }}
+    </div>
+    <a href="/" class="w-full inline-block mt-4 text-white bg-brand-indigo-600 hover:bg-brand-indigo-700 focus:ring-4 focus:outline-none focus:ring-brand-indigo-800 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all duration-300">
+        Return to Upload
+    </a>
 </div>
 {% endblock %}

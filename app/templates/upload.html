@@ -3,63 +3,84 @@
 {% block title %}Upload Receipt{% endblock %}
 
 {% block content %}
-<h1>Receipt Scanner</h1>
-<p class="subtitle">Upload an image of your receipt to get started.</p>
+<div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-slate-100 tracking-tight">Receipt Scanner</h1>
+    <p class="text-slate-400 mt-2">Upload your receipt to begin extraction.</p>
+</div>
 
 <form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
-    
+
     {% if success_message %}
-    <div class="alert success">
-        {{ success_message }}
+    <div class="flex items-center p-4 mb-4 text-sm text-green-300 border border-green-700 rounded-lg bg-green-900/50" role="alert">
+        <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 14.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM10 10a1 1 0 1 1-2 0V6a1 1 0 1 1 2 0v4Z"></path></svg>
+        <span class="font-medium">{{ success_message }}</span>
     </div>
     {% endif %}
 
-    <div class="form-group">
-        <label for="source_account">Source Account:</label>
-        <select id="source_account" name="source_account" required>
-            {% for account in asset_accounts %}
-            <option value="{{ account }}">{{ account }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <div class="space-y-6">
+        <div>
+            <label for="source_account" class="block text-sm font-medium text-slate-300 mb-1">Source Account</label>
+            <select id="source_account" name="source_account" required
+                    class="w-full bg-slate-900/80 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-brand-indigo-500 focus:border-brand-indigo-500 block p-2.5 transition">
+                {% for account in asset_accounts %}
+                <option value="{{ account }}">{{ account }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <div class="form-group">
-        <label>Receipt Image:</label>
-        <div class="file-upload-wrapper">
-            <input type="file" id="file" name="file" accept="image/*" capture="environment" required>
-            <div class="file-upload-text">
-                Drag & Drop or <span>Browse File</span>
-            </div>
-            <div id="file-name"></div>
+        <div>
+            <label id="file-drop-label" for="file" class="flex flex-col items-center justify-center w-full h-48 border-2 border-slate-700 border-dashed rounded-lg cursor-pointer bg-slate-900/50 hover:bg-slate-800/50 transition-colors">
+                <div id="initial-state" class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg class="w-8 h-8 mb-4 text-slate-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg>
+                    <p class="mb-2 text-sm text-slate-400"><span class="font-semibold text-brand-indigo-400">Click to upload</span> or drag and drop</p>
+                    <p class="text-xs text-slate-500">PNG, JPG, or GIF</p>
+                </div>
+                <div id="file-name-display" class="hidden text-center text-slate-300"></div>
+                <input id="file" name="file" type="file" class="hidden" accept="image/*" capture="environment" required>
+            </label>
         </div>
     </div>
-
-    <div class="form-group">
-        <button type="submit" id="submit-btn" class="btn">Extract Receipt Data</button>
+    
+    <div class="mt-8">
+        <button type="submit" id="submit-btn" class="w-full text-white bg-brand-indigo-600 hover:bg-brand-indigo-700 focus:ring-4 focus:outline-none focus:ring-brand-indigo-800 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all duration-300 shadow-lg hover:shadow-brand-indigo-800/50">
+            Extract Receipt Data
+        </button>
     </div>
 </form>
 
-<div id="loading" class="loading">
-    <p>Processing receipt... This may take a minute.<br>Please don't close this page.</p>
+<div id="loading" class="hidden mt-6 text-center">
+    <div class="inline-flex items-center">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-brand-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <span class="text-slate-300">Processing receipt, please wait...</span>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
     function showLoading() {
-        document.getElementById('loading').classList.add('active');
-        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('receipt-form').classList.add('hidden');
     }
 
     const fileInput = document.getElementById('file');
-    const fileNameDisplay = document.getElementById('file-name');
+    const dropLabel = document.getElementById('file-drop-label');
+    const initialState = document.getElementById('initial-state');
+    const fileNameDisplay = document.getElementById('file-name-display');
 
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            fileNameDisplay.textContent = `Selected: ${fileInput.files[0].name}`;
-        } else {
-            fileNameDisplay.textContent = '';
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            initialState.classList.add('hidden');
+            fileNameDisplay.classList.remove('hidden');
+            fileNameDisplay.innerHTML = `<span class="font-bold text-slate-100">File Selected:</span><br><span class="text-sm text-slate-400">${e.target.files[0].name}</span>`;
         }
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropLabel.addEventListener(eventName, () => dropLabel.classList.add('border-brand-indigo-500'), false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropLabel.addEventListener(eventName, () => dropLabel.classList.remove('border-brand-indigo-500'), false);
     });
 </script>
 {% endblock %}
