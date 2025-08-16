@@ -50,7 +50,7 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
 
         if not budgets:
             budgets = ["Monthly", "Weekly", "Other"]
-                print("Using default budgets due to Firefly III connection issues")
+            print("Using default budgets due to Firefly III connection issues")
 
         receipt_prompt = (
             "Please analyze the attached receipt image and extract the following details: "
