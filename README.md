@@ -41,7 +41,6 @@ https://github.com/user-attachments/assets/ec41d8dc-71e9-4aa4-b65c-869c3dd54845
    ```
    # Firefly III API Configuration
    FIREFLY_III_URL=https://your-firefly-iii-instance.com
-   FIREFLY_III_TOKEN=your-personal-access-token
 
    # Google AI API Configuration
    GOOGLE_AI_API_KEY=your-google-ai-api-key

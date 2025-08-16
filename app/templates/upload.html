@@ -4,25 +4,23 @@
 
 {% block content %}
 <h1>Receipt Scanner</h1>
-<form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+<form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="return showLoading();">
+    <div class="form-group">
+        <label for="firefly_token">Firefly III Token:</label>
+        <input type="password" id="firefly_token" name="firefly_token" placeholder="Enter your Personal Access Token" required>
+        <button type="button" id="load-accounts-btn" class="btn" style="margin-top: 10px; width: auto;">Load Accounts</button>
+        <small id="token-status" style="display: block; margin-top: 5px;"></small>
+    </div>
+
     <div class="form-group">
         <label for="source_account">Source Account:</label>
-        <select id="source_account" name="source_account" required>
-            {% for account in asset_accounts %}
-            <option value="{{ account }}">{{ account }}</option>
-            {% endfor %}
+        <select id="source_account" name="source_account" required disabled>
+            <option value="">Enter token and click load</option>
         </select>
     </div>
 
     <div class="camera-container">
-        <video id="camera-preview" autoplay playsinline></video>
-        <canvas id="canvas" style="display: none;"></canvas>
-        <div class="camera-buttons">
-            <button type="button" class="camera-btn start-camera" id="startCamera">Take Photo</button>
-            <button type="button" class="camera-btn capture" id="capture">Capture</button>
-            <button type="button" class="camera-btn retake" id="retake">Retake</button>
         </div>
-    </div>
 
     <div class="or-divider"><span>OR</span></div>
 
@@ -31,12 +29,11 @@
         <input type="file" id="file" name="file" accept="image/*" capture="environment">
     </div>
 
-    <button type="submit" id="submit-btn" class="btn">Extract Receipt Data</button>
+    <button type="submit" id="submit-btn" class="btn" disabled>Extract Receipt Data</button>
 </form>
 
 <div id="loading" class="loading">
-    <p>Processing receipt... This may take a minute. Please don't close this page.</p>
-    <p>If this takes too long, you can try again with a smaller or clearer image.</p>
+    <p>Processing receipt... Please don't close this page.</p>
 </div>
 
 {% if success_message %}
@@ -48,9 +45,80 @@
 
 {% block extra_scripts %}
 <script>
+    const tokenInput = document.getElementById('firefly_token');
+    const loadAccountsBtn = document.getElementById('load-accounts-btn');
+    const accountSelect = document.getElementById('source_account');
+    const submitBtn = document.getElementById('submit-btn');
+    const tokenStatus = document.getElementById('token-status');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const storedToken = sessionStorage.getItem('firefly_token');
+        const serverToken = "{{ firefly_token or '' }}";
+        if (storedToken) {
+            tokenInput.value = storedToken;
+            loadAccounts();
+        } else if (serverToken) {
+            tokenInput.value = serverToken;
+            sessionStorage.setItem('firefly_token', serverToken);
+            loadAccounts();
+        }
+    });
+
+    async function loadAccounts() {
+        const token = tokenInput.value.trim();
+        if (!token) {
+            tokenStatus.textContent = 'Please enter a token.';
+            tokenStatus.style.color = 'red';
+            return;
+        }
+
+        tokenStatus.textContent = 'Loading accounts...';
+        tokenStatus.style.color = '#333';
+        loadAccountsBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/api/accounts?token=${encodeURIComponent(token)}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error ${response.status}`);
+            }
+            const data = await response.json();
+            
+            accountSelect.innerHTML = '<option value="">Select an account</option>';
+            data.accounts.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account;
+                option.textContent = account;
+                accountSelect.appendChild(option);
+            });
+            
+            accountSelect.disabled = false;
+            submitBtn.disabled = false;
+            tokenStatus.textContent = `Loaded ${data.accounts.length} accounts.`;
+            tokenStatus.style.color = 'green';
+            sessionStorage.setItem('firefly_token', token);
+
+        } catch (error) {
+            tokenStatus.textContent = `Error: ${error.message}`;
+            tokenStatus.style.color = 'red';
+            accountSelect.innerHTML = '<option value="">Could not load accounts</option>';
+            accountSelect.disabled = true;
+            submitBtn.disabled = true;
+        } finally {
+            loadAccountsBtn.disabled = false;
+        }
+    }
+
+    loadAccountsBtn.addEventListener('click', loadAccounts);
+
     function showLoading() {
+        if (!tokenInput.value.trim()) {
+            alert('Firefly III Token is required.');
+            return false;
+        }
         document.getElementById('loading').classList.add('active');
-        document.getElementById('submit-btn').disabled = true;
+        submitBtn.disabled = true;
+        return true;
     }
 </script>
-{% endblock %} 
+{% endblock %}
