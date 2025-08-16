@@ -54,7 +54,8 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
 
         receipt_prompt = (
             "Please analyze the attached receipt image and extract the following details: "
-            "1) receipt amount, 2) receipt category (choose from: "
+            "1) receipt amount (in Indonesian currency format with two decimal places using a comma ',', for example: 155.208,00), " 
+            "2) receipt category (choose from: "
             + ", ".join(categories)
             + "), "
             "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
