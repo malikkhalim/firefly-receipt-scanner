@@ -61,8 +61,8 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
             "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
             "4) destination account (store name) "
             "5) description of the transaction"
-            "6) date (in ISO 8601 format: YYYY-MM-DDTHH:MM:SS+HH:MM). The current date and time is " "
-            + datetime.now().astimezone().isoformat()
+            "6) date (in ISO 8601 format: YYYY-MM-DDTHH:MM:SS+HH:MM). The current date and time is "
+            + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             + ". "
             "Most receipts are from the past few days, so use today's date as a reference point when interpreting dates. "
             "If the date is not on the receipt, use today's date as the default."
