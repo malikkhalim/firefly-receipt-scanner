@@ -60,10 +60,20 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     function showLoading() {
         document.getElementById('loading').classList.add('active');
         document.getElementById('submit-btn').disabled = true;
     }
+
+    flatpickr("#date", {
+        enableTime: true,
+        enableSeconds: true, 
+        dateFormat: "Y-m-d\\TH:i:SP", 
+        time_24hr: true,
+        altInput: true,
+        altFormat: "F j, Y - H:i:S" 
+    });
 </script>
 {% endblock %} 
