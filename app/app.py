@@ -7,6 +7,7 @@ from fastapi import (
     FastAPI,
     File,
     Form,
+    HTTPException,
     Request,
     UploadFile,
 )
@@ -62,8 +63,14 @@ templates = Jinja2Templates(directory="app/templates")
 async def get_firefly_credentials(request: Request):
     firefly_url = request.session.get("firefly_url")
     firefly_token = request.session.get("firefly_token")
+
     if not firefly_url or not firefly_token:
-        return RedirectResponse(url="/login", status_code=307)
+        # Ganti 'return RedirectResponse' dengan 'raise HTTPException'
+        raise HTTPException(
+            status_code=307, 
+            headers={"Location": "/login"}
+        )
+
     return {"url": firefly_url, "token": firefly_token}
 
 
