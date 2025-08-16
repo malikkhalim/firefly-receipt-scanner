@@ -1,17 +1,14 @@
 {% extends "base.html" %}
-
 {% block title %}Login{% endblock %}
-
 {% block content %}
 <h1>Connect to Firefly III</h1>
-<p>Please enter your Firefly III URL and Personal Access Token to continue.</p>
+<p class="subtitle">Enter your credentials to continue.</p>
 
 {% if error_message %}
-<div class="error">
+<div class="alert error">
     {{ error_message }}
 </div>
 {% endif %}
-
 <form action="/login" method="post">
     <div class="form-group">
         <label for="firefly_url">Firefly III URL:</label>

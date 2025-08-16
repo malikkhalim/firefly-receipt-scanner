@@ -1,3 +1,24 @@
+/* app/static/css/styles.css */
+
+/* --- Variabel Warna & Pengaturan Dasar --- */
+:root {
+    --primary-color: #4A90E2;
+    --primary-hover: #357ABD;
+    --secondary-color: #7f8c8d;
+    --secondary-hover: #6c7a7b;
+    --background-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    --card-bg: #ffffff;
+    --text-dark: #2c3e50;
+    --text-light: #5a6877;
+    --border-color: #dfe4ea;
+    --input-bg: #f8f9fa;
+    --success-bg: #e0f8e9;
+    --success-text: #1d9752;
+    --error-bg: #ffebee;
+    --error-text: #c62828;
+    --shadow-color: rgba(74, 144, 226, 0.15);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,104 +28,223 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: var(--text-light);
+    background-image: var(--background-gradient);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
 }
 
+/* --- Kontainer Utama --- */
 .container {
-    max-width: 600px;
+    max-width: 500px;
+    width: 100%;
     margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: var(--card-bg);
+    padding: 30px 35px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    border: 1px solid #fff;
 }
 
 h1 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 20px;
+    color: var(--text-dark);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 15px;
     text-align: center;
+    letter-spacing: -0.5px;
 }
 
+.subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+
+/* --- Formulir --- */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #2c3e50;
+    color: var(--text-dark);
+    font-size: 15px;
 }
 
 input, select {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
     font-size: 16px;
-    background-color: white;
+    background-color: var(--input-bg);
+    color: var(--text-dark);
+    transition: all 0.2s ease-in-out;
+}
+
+input::placeholder {
+    color: #aab2bd;
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
+    box-shadow: 0 0 0 3px var(--shadow-color);
 }
 
+/* --- Tombol Unggah File Kustom --- */
+.file-upload-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: var(--input-bg);
+}
+
+.file-upload-wrapper:hover {
+    border-color: var(--primary-color);
+    background-color: #f2f6fc;
+}
+
+.file-upload-wrapper input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-upload-text {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.file-upload-text span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+#file-name {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+
+/* --- Tombol --- */
 .btn {
     display: inline-block;
     width: 100%;
-    padding: 12px;
-    background: #3498db;
+    padding: 14px;
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
     text-align: center;
     text-decoration: none;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
 }
 
 .btn:hover {
-    background: #2980b9;
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
 }
 
 .btn-secondary {
-    background: #95a5a6;
+    background: transparent;
+    color: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    box-shadow: none;
 }
 
 .btn-secondary:hover {
-    background: #7f8c8d;
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(127, 140, 141, 0.2);
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+
+
+/* --- Notifikasi (Error, Success) --- */
+.alert {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 500;
+}
+.alert::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .error {
-    background: #ffebee;
-    color: #c62828;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 16px;
+    background: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid #f6c8c8;
+}
+.error::before {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23c62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>');
 }
 
 .success {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 16px;
+    background: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid #a3e9b9;
+}
+.success::before {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231d9752" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>');
 }
 
+
+/* --- Animasi Loading --- */
 .loading {
     display: none;
     text-align: center;
     margin-top: 20px;
     padding: 20px;
-    background: #f8f9fa;
+    background: var(--input-bg);
     border-radius: 8px;
 }
 
@@ -112,16 +252,19 @@ input:focus, select:focus {
     display: block;
 }
 
+.loading p {
+    margin: 0 0 15px 0;
+}
+
 .loading::after {
     content: '';
     display: inline-block;
     width: 30px;
     height: 30px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3498db;
+    border: 4px solid rgba(0,0,0,0.1);
+    border-top-color: var(--primary-color);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-top: 10px;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -129,37 +272,26 @@ input:focus, select:focus {
     100% { transform: rotate(360deg); }
 }
 
-/* Remove these camera-related styles */
-.camera-container,
-.camera-buttons,
-.camera-btn,
-.start-camera,
-.capture,
-.retake,
-.or-divider {
+/* Sembunyikan fitur kamera yang tidak terpakai */
+.camera-container, .or-divider {
     display: none;
 }
 
-@media (max-width: 480px) {
+
+/* --- Responsif --- */
+@media (max-width: 520px) {
     body {
         padding: 10px;
+        align-items: flex-start;
     }
-
     .container {
-        padding: 15px;
+        padding: 20px;
+        margin-top: 10px;
     }
-
     h1 {
-        font-size: 20px;
+        font-size: 24px;
     }
-
-    .btn, .camera-btn {
-        padding: 10px;
-        font-size: 14px;
+    .button-group {
+        flex-direction: column;
     }
-
-    .error, .success {
-        font-size: 14px;
-        padding: 12px;
-    }
-} 
+}

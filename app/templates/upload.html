@@ -4,7 +4,16 @@
 
 {% block content %}
 <h1>Receipt Scanner</h1>
+<p class="subtitle">Upload an image of your receipt to get started.</p>
+
 <form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+    
+    {% if success_message %}
+    <div class="alert success">
+        {{ success_message }}
+    </div>
+    {% endif %}
+
     <div class="form-group">
         <label for="source_account">Source Account:</label>
         <select id="source_account" name="source_account" required>
@@ -14,36 +23,25 @@
         </select>
     </div>
 
-    <div class="camera-container">
-        <video id="camera-preview" autoplay playsinline></video>
-        <canvas id="canvas" style="display: none;"></canvas>
-        <div class="camera-buttons">
-            <button type="button" class="camera-btn start-camera" id="startCamera">Take Photo</button>
-            <button type="button" class="camera-btn capture" id="capture">Capture</button>
-            <button type="button" class="camera-btn retake" id="retake">Retake</button>
+    <div class="form-group">
+        <label>Receipt Image:</label>
+        <div class="file-upload-wrapper">
+            <input type="file" id="file" name="file" accept="image/*" capture="environment" required>
+            <div class="file-upload-text">
+                Drag & Drop or <span>Browse File</span>
+            </div>
+            <div id="file-name"></div>
         </div>
     </div>
 
-    <div class="or-divider"><span>OR</span></div>
-
     <div class="form-group">
-        <label for="file">Upload Receipt:</label>
-        <input type="file" id="file" name="file" accept="image/*" capture="environment">
+        <button type="submit" id="submit-btn" class="btn">Extract Receipt Data</button>
     </div>
-
-    <button type="submit" id="submit-btn" class="btn">Extract Receipt Data</button>
 </form>
 
 <div id="loading" class="loading">
-    <p>Processing receipt... This may take a minute. Please don't close this page.</p>
-    <p>If this takes too long, you can try again with a smaller or clearer image.</p>
+    <p>Processing receipt... This may take a minute.<br>Please don't close this page.</p>
 </div>
-
-{% if success_message %}
-<div class="success">
-    {{ success_message }}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
@@ -52,5 +50,16 @@
         document.getElementById('loading').classList.add('active');
         document.getElementById('submit-btn').disabled = true;
     }
+
+    const fileInput = document.getElementById('file');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = `Selected: ${fileInput.files[0].name}`;
+        } else {
+            fileNameDisplay.textContent = '';
+        }
+    });
 </script>
-{% endblock %} 
+{% endblock %}

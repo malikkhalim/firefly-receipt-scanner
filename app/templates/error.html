@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-
 {% block title %}Error{% endblock %}
-
 {% block content %}
-<h1>Error</h1>
-<div class="error">
+<h1>An Error Occurred</h1>
+<div class="alert error">
     <p>{{ error_message }}</p>
 </div>
 <div class="form-group">
     <a href="/" class="btn">Return to Upload</a>
 </div>
-{% endblock %} 
+{% endblock %}
