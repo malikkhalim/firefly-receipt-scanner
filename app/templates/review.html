@@ -56,11 +56,11 @@
         </div>
 
         <div>
-            <label for="tags" class="block text-sm font-medium text-slate-300 mb-1">tags</label>
-            <select id="tags" name="tags" required 
+            <label for="tag" class="block text-sm font-medium text-slate-300 mb-1">tag</label>
+            <select id="tag" name="tag" required 
                     class="w-full bg-slate-900/80 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-brand-indigo-500 focus:border-brand-indigo-500 block p-2.5 transition">
-                {% for tags in extracted_data.available_tags %}
-                <option value="{{ tags }}" {% if tags == extracted_data.tags %}selected{% endif %}>{{ tags }}</option>
+                {% for tag in extracted_data.available_tags %}
+                <option value="{{ tag }}" {% if tag == extracted_data.tag %}selected{% endif %}>{{ tag }}</option>
                 {% endfor %}
             </select>
         </div>1
