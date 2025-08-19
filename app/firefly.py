@@ -57,6 +57,27 @@ def get_firefly_budgets(firefly_url: str, firefly_token: str):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching budgets: {e}")
         return []
+    
+    
+def get_firefly_tags(firefly_url: str, firefly_token: str):
+    api_url = urljoin(firefly_url, API_BASE_PATH)
+    url = urljoin(api_url, "tags")
+    headers = {
+        "Authorization": f"Bearer {firefly_token}",
+        "Accept": "application/json",
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=TIMEOUT)
+        response.raise_for_status()
+        budgets_data = response.json()["data"]
+        return [budget["attributes"]["name"] for budget in budgets_data]
+    except requests.exceptions.Timeout:
+        print("Request to Firefly III timed out when fetching tags")
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching budgets: {e}")
+        return []
+
 
 
 def get_firefly_asset_accounts(firefly_url: str, firefly_token: str):
@@ -112,7 +133,7 @@ def create_firefly_transaction(
                 "source_name": source_account,
                 "category_name": receipt.category,
                 "budget_name": receipt.budget,
-                "tags": ["automated"],
+                "tags": receipt.tags,
             }
         ]
     }
@@ -130,7 +151,6 @@ def create_firefly_transaction(
             raise Exception(
                 "Authentication failed. Please check your Firefly III API token."
             )
-        # ... (rest of the error handling remains the same)
         else:
             error_message = f"Error creating transaction: HTTP {response.status_code}"
             try:

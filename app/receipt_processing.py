@@ -9,6 +9,7 @@ from google import genai
 from .firefly import (
     create_firefly_transaction,
     get_firefly_budgets,
+    get_firefly_tags,
     get_firefly_categories,
 )
 from .image_utils import process_image
@@ -34,6 +35,7 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
         print("Fetching categories and budgets...")
         categories = get_firefly_categories(firefly_url, firefly_token)
         budgets = get_firefly_budgets(firefly_url, firefly_token)
+        tags = get_firefly_tags(firefly_url, firefly_token)
         print(
             f"Found {len(categories) if categories else 0} categories and {len(budgets) if budgets else 0} budgets"
         )
@@ -51,17 +53,20 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
         if not budgets:
             budgets = ["Monthly", "Weekly", "Other"]
             print("Using default budgets due to Firefly III connection issues")
+            
+        if not tags:
+            tags = ["food and beverages", "automotif", "rokok"]
+            print("Using default tags due to Firefly III connection issues")
 
         receipt_prompt = (
             "Please analyze the attached receipt image and extract the following details: "
             "1) receipt amount (in Indonesian currency format with two decimal places using a comma ',', for example: 155.208,00), " 
-            "2) receipt category (choose from: "
-            + ", ".join(categories)
-            + "), "
-            "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
-            "4) destination account (store name) "
-            "5) description of the transaction"
-            "6) date (in ISO 8601 format: YYYY-MM-DDTHH:MM:SS+HH:MM). The current date and time is "
+            "2) receipt category (choose from: " + ", ".join(categories) + "), "
+            "3) receipt budget (choose from: " + ", ".join(""" budgets """) + "), "
+            "4) receipt tags (choose from: " + ", ".join(tags) + "), "
+            "5) destination account (store name) "
+            "6) description of the transaction"
+            "7) date (in ISO 8601 format: YYYY-MM-DDTHH:MM:SS+HH:MM). The current date and time is "
             + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             + ". "
             "Most receipts are from the past few days, so use today's date as a reference point when interpreting dates. "
@@ -108,8 +113,10 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
             "description": gemini_response.parsed.description,
             "category": gemini_response.parsed.category,
             "budget": gemini_response.parsed.budget,
+            "tags": gemini_response.parsed.tags,
             "available_categories": categories,
             "available_budgets": budgets,
+            "available_tags": tags,
         }
         print("Successfully extracted all data")
         return extracted_data
@@ -140,6 +147,7 @@ async def create_transaction_from_data(
                 print(f"- Store: {receipt.store_name}")
                 print(f"- Category: {receipt.category}")
                 print(f"- Budget: {receipt.budget}")
+                print(f"- tags: {receipt.tags}")
                 print(f"- Source Account: {source_account}")
                 print(f"- Transaction ID: {transaction_result['data']['id']}")
                 return f"Transaction created successfully with ID: {transaction_result['data']['id']}"
