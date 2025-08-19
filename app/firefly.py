@@ -70,7 +70,7 @@ def get_firefly_tags(firefly_url: str, firefly_token: str):
         response = requests.get(url, headers=headers, timeout=TIMEOUT)
         response.raise_for_status()
         tags_data = response.json()["data"]
-        return [tag["attributes"]["name"] for tag in tags_data]
+        return [tag["attributes"]["tag"] for tag in tags_data]
     except requests.exceptions.Timeout:
         print("Request to Firefly III timed out when fetching tags")
         return []
