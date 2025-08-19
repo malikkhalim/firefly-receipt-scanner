@@ -8,4 +8,4 @@ class ReceiptModel(BaseModel):
     description: str
     category: str
     budget: str
-    tags: str
+    tag: str

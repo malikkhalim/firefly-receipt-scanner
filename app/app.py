@@ -156,6 +156,7 @@ async def create_transaction(
     description: str = Form(...),
     category: str = Form(...),
     budget: str = Form(...),
+    tag: str = Form(...),
     source_account: str = Form(...),
     creds: dict = Depends(get_firefly_credentials),
 ):
@@ -167,6 +168,7 @@ async def create_transaction(
             "description": description,
             "category": category,
             "budget": budget,
+            "tag": tag,
             "source_account": source_account,
         }
         result = await create_transaction_from_data(

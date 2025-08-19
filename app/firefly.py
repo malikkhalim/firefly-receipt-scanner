@@ -69,13 +69,13 @@ def get_firefly_tags(firefly_url: str, firefly_token: str):
     try:
         response = requests.get(url, headers=headers, timeout=TIMEOUT)
         response.raise_for_status()
-        budgets_data = response.json()["data"]
-        return [budget["attributes"]["name"] for budget in budgets_data]
+        tags_data = response.json()["data"]
+        return [tag["attributes"]["name"] for tag in tags_data]
     except requests.exceptions.Timeout:
         print("Request to Firefly III timed out when fetching tags")
         return []
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching budgets: {e}")
+        print(f"Error fetching tags: {e}")
         return []
 
 
@@ -133,7 +133,7 @@ def create_firefly_transaction(
                 "source_name": source_account,
                 "category_name": receipt.category,
                 "budget_name": receipt.budget,
-                "tags": receipt.tags,
+                "tag_name": receipt.tag,
             }
         ]
     }

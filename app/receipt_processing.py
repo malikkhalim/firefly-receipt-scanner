@@ -62,7 +62,7 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
             "Please analyze the attached receipt image and extract the following details: "
             "1) receipt amount (in Indonesian currency format with two decimal places using a comma ',', for example: 155.208,00), " 
             "2) receipt category (choose from: " + ", ".join(categories) + "), "
-            "3) receipt budget (choose from: " + ", ".join(""" budgets """) + "), "
+            "3) receipt budget (choose from: " + ", ".join(budgets) + "), "
             "4) receipt tags (choose from: " + ", ".join(tags) + "), "
             "5) destination account (store name) "
             "6) description of the transaction"
@@ -113,10 +113,10 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
             "description": gemini_response.parsed.description,
             "category": gemini_response.parsed.category,
             "budget": gemini_response.parsed.budget,
-            "tags": gemini_response.parsed.tags,
+            "tag": gemini_response.parsed.tag,
             "available_categories": categories,
             "available_budgets": budgets,
-            "available_tags": tags,
+            "available_tag": tags,
         }
         print("Successfully extracted all data")
         return extracted_data
@@ -147,7 +147,7 @@ async def create_transaction_from_data(
                 print(f"- Store: {receipt.store_name}")
                 print(f"- Category: {receipt.category}")
                 print(f"- Budget: {receipt.budget}")
-                print(f"- tags: {receipt.tags}")
+                print(f"- tags: {receipt.tag}")
                 print(f"- Source Account: {source_account}")
                 print(f"- Transaction ID: {transaction_result['data']['id']}")
                 return f"Transaction created successfully with ID: {transaction_result['data']['id']}"
