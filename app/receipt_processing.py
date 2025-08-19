@@ -37,7 +37,7 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
         budgets = get_firefly_budgets(firefly_url, firefly_token)
         tags = get_firefly_tags(firefly_url, firefly_token)
         print(
-            f"Found {len(categories) if categories else 0} categories and {len(budgets) if budgets else 0} budgets"
+            f"Found {len(categories) if categories else 0} categories, {len(budgets) if budgets else 0} budgets, {len(tags) if tags else 0} budgets,"
         )
         if not categories:
             categories = [
