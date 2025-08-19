@@ -8,7 +8,7 @@
     <p class="text-slate-400 mt-2">Upload your receipt to begin extraction.</p>
 </div>
 
-<form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+<form id="receipt-form" action="/extract" method="post" enctype="multipart/form-data" onsubmit="return showLoading();">
 
     {% if success_message %}
     <div class="flex items-center p-4 mb-4 text-sm text-green-300 border border-green-700 rounded-lg bg-green-900/50" role="alert">
@@ -28,20 +28,26 @@
             </select>
         </div>
 
-        <div>
-            <label id="file-drop-label" for="file" class="flex flex-col items-center justify-center w-full h-48 border-2 border-slate-700 border-dashed rounded-lg cursor-pointer bg-slate-900/50 hover:bg-slate-800/50 transition-colors">
-                <div id="initial-state" class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                    <svg class="w-8 h-8 mb-4 text-slate-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg>
-                    <p class="mb-2 text-sm text-slate-400"><span class="font-semibold text-brand-indigo-400">Click to upload</span> or drag and drop</p>
-                    <p class="text-xs text-slate-500">PNG, JPG, or GIF</p>
+        <div id="upload-area" class="p-6 border-2 border-slate-700 border-dashed rounded-lg bg-slate-900/50">
+            <div id="initial-state">
+                <p class="text-center text-sm text-slate-400 mb-4">Choose an upload method:</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button type="button" id="camera-btn" class="flex-1 inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-slate-800 border border-slate-700 rounded-md hover:bg-slate-700 transition">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.776 48.776 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008v-.008z" /></svg>
+                        Take Photo
+                    </button>
+                    <button type="button" id="gallery-btn" class="flex-1 inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-slate-800 border border-slate-700 rounded-md hover:bg-slate-700 transition">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                        Upload from Gallery
+                    </button>
                 </div>
-                <div id="file-name-display" class="hidden flex-col items-center justify-center text-center">
-                    <svg class="w-8 h-8 mb-4 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p id="file-info" class="font-medium text-slate-300"></p>
-                    <p class="text-xs text-slate-500 mt-1">Click again or drop another file to replace</p>
-                </div>
-                <input type="file" id="file" name="file" accept="image/*" class="hidden">
-            </label>
+            </div>
+            <div id="file-name-display" class="hidden flex-col items-center justify-center text-center">
+                <svg class="w-8 h-8 mb-4 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <p id="file-info" class="font-medium text-slate-300"></p>
+                <p class="text-xs text-slate-500 mt-1">Click a button above to replace</p>
+            </div>
+             <input type="file" id="file" name="file" accept="image/*" class="hidden">
         </div>
     </div>
     
@@ -53,11 +59,7 @@
 </form>
 
 <div id="loading" class="hidden mt-6 text-center">
-    <div class="inline-flex items-center">
-        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-brand-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        <span class="text-slate-300">Processing receipt, please wait...</span>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -68,58 +70,45 @@
     }
 
     const fileInput = document.getElementById('file');
-    const dropLabel = document.getElementById('file-drop-label');
+    const cameraBtn = document.getElementById('camera-btn');
+    const galleryBtn = document.getElementById('gallery-btn');
+    
     const initialState = document.getElementById('initial-state');
     const fileNameDisplay = document.getElementById('file-name-display');
     const fileInfo = document.getElementById('file-info');
 
-    // Fungsi baru untuk mengupdate UI setelah file dipilih
+    // Fungsi untuk mengupdate UI setelah file dipilih
     function updateFileDisplay(file) {
         if (file) {
+            // Sembunyikan tombol-tombol dan tampilkan nama file
             initialState.classList.add('hidden');
             fileNameDisplay.classList.remove('hidden');
             fileInfo.textContent = file.name;
         }
     }
 
-    // Event listener untuk saat file dipilih via klik
+    // --- SCRIPT BARU UNTUK KONTROL TOMBOL ---
+
+    // Saat tombol "Take Photo" diklik
+    cameraBtn.addEventListener('click', () => {
+        // Tambahkan atribut 'capture' untuk langsung buka kamera
+        fileInput.setAttribute('capture', 'environment');
+        fileInput.click();
+    });
+
+    // Saat tombol "Upload from Gallery" diklik
+    galleryBtn.addEventListener('click', () => {
+        // Hapus atribut 'capture' agar membuka galeri
+        fileInput.removeAttribute('capture');
+        fileInput.click();
+    });
+
+    // Event listener untuk saat file dipilih (baik dari kamera maupun galeri)
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             updateFileDisplay(e.target.files[0]);
         }
     });
 
-    // --- SCRIPT BARU UNTUK FUNGSI DRAG & DROP ---
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropLabel.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Highlight drop area saat file diseret di atasnya
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropLabel.addEventListener(eventName, () => dropLabel.classList.add('border-brand-indigo-500', 'bg-slate-800/50'), false);
-    });
-
-    // Hilangkan highlight saat file meninggalkan area
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropLabel.addEventListener(eventName, () => dropLabel.classList.remove('border-brand-indigo-500', 'bg-slate-800/50'), false);
-    });
-
-    // Tangani file yang di-drop
-    dropLabel.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-
-        if (files.length > 0) {
-            // Masukkan file yang di-drop ke input file asli
-            fileInput.files = files;
-            // Update tampilan
-            updateFileDisplay(files[0]);
-        }
-    }, false);
 </script>
 {% endblock %}
