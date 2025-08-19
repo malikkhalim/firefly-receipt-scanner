@@ -147,7 +147,7 @@ async def create_transaction_from_data(
                 print(f"- Store: {receipt.store_name}")
                 print(f"- Category: {receipt.category}")
                 print(f"- Budget: {receipt.budget}")
-                print(f"- tags: {receipt.tag}")
+                print(f"- tag: {receipt.tag}")
                 print(f"- Source Account: {source_account}")
                 print(f"- Transaction ID: {transaction_result['data']['id']}")
                 return f"Transaction created successfully with ID: {transaction_result['data']['id']}"
