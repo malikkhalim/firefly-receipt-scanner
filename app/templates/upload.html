@@ -30,13 +30,17 @@
 
         <div>
             <label id="file-drop-label" for="file" class="flex flex-col items-center justify-center w-full h-48 border-2 border-slate-700 border-dashed rounded-lg cursor-pointer bg-slate-900/50 hover:bg-slate-800/50 transition-colors">
-                <div id="initial-state" class="flex flex-col items-center justify-center pt-5 pb-6">
+                <div id="initial-state" class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                     <svg class="w-8 h-8 mb-4 text-slate-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg>
                     <p class="mb-2 text-sm text-slate-400"><span class="font-semibold text-brand-indigo-400">Click to upload</span> or drag and drop</p>
                     <p class="text-xs text-slate-500">PNG, JPG, or GIF</p>
                 </div>
-                <div id="file-name-display" class="hidden text-center text-slate-300"></div>
-                <input type="file" id="file" name="file" accept="image/*">
+                <div id="file-name-display" class="hidden flex-col items-center justify-center text-center">
+                    <svg class="w-8 h-8 mb-4 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p id="file-info" class="font-medium text-slate-300"></p>
+                    <p class="text-xs text-slate-500 mt-1">Click again or drop another file to replace</p>
+                </div>
+                <input type="file" id="file" name="file" accept="image/*" class="hidden">
             </label>
         </div>
     </div>
@@ -67,20 +71,55 @@
     const dropLabel = document.getElementById('file-drop-label');
     const initialState = document.getElementById('initial-state');
     const fileNameDisplay = document.getElementById('file-name-display');
+    const fileInfo = document.getElementById('file-info');
 
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
+    // Fungsi baru untuk mengupdate UI setelah file dipilih
+    function updateFileDisplay(file) {
+        if (file) {
             initialState.classList.add('hidden');
             fileNameDisplay.classList.remove('hidden');
-            fileNameDisplay.innerHTML = `<span class="font-bold text-slate-100">File Selected:</span><br><span class="text-sm text-slate-400">${e.target.files[0].name}</span>`;
+            fileInfo.textContent = file.name;
+        }
+    }
+
+    // Event listener untuk saat file dipilih via klik
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            updateFileDisplay(e.target.files[0]);
         }
     });
 
+    // --- SCRIPT BARU UNTUK FUNGSI DRAG & DROP ---
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropLabel.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Highlight drop area saat file diseret di atasnya
     ['dragenter', 'dragover'].forEach(eventName => {
-        dropLabel.addEventListener(eventName, () => dropLabel.classList.add('border-brand-indigo-500'), false);
+        dropLabel.addEventListener(eventName, () => dropLabel.classList.add('border-brand-indigo-500', 'bg-slate-800/50'), false);
     });
+
+    // Hilangkan highlight saat file meninggalkan area
     ['dragleave', 'drop'].forEach(eventName => {
-        dropLabel.addEventListener(eventName, () => dropLabel.classList.remove('border-brand-indigo-500'), false);
+        dropLabel.addEventListener(eventName, () => dropLabel.classList.remove('border-brand-indigo-500', 'bg-slate-800/50'), false);
     });
+
+    // Tangani file yang di-drop
+    dropLabel.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+            // Masukkan file yang di-drop ke input file asli
+            fileInput.files = files;
+            // Update tampilan
+            updateFileDisplay(files[0]);
+        }
+    }, false);
 </script>
 {% endblock %}
