@@ -134,7 +134,7 @@ def create_firefly_transaction(
                 "source_name": source_account,
                 "category_name": receipt.category,
                 "budget_name": receipt.budget,
-                "tags": receipt.tags,
+                "tags": receipt.tag,
             }
         ]
     }
