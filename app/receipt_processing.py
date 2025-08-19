@@ -116,7 +116,7 @@ async def extract_receipt_data(file: UploadFile, firefly_url: str, firefly_token
             "tag": gemini_response.parsed.tag,
             "available_categories": categories,
             "available_budgets": budgets,
-            "available_tag": tags,
+            "available_tags": tags,
         }
         print("Successfully extracted all data")
         return extracted_data

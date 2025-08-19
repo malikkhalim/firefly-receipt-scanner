@@ -121,8 +121,7 @@ def create_firefly_transaction(
     except ValueError:
         print(f"Invalid date format: {receipt.date}. Using current date instead.")
         formatted_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")
-        
-    tags_list = [tag.strip() for tag in receipt.tags.split(',')] if receipt.tags else []
+    
 
     payload = {
         "transactions": [
@@ -135,7 +134,7 @@ def create_firefly_transaction(
                 "source_name": source_account,
                 "category_name": receipt.category,
                 "budget_name": receipt.budget,
-                "tag_name": tags_list,
+                "tags": receipt.tags,
             }
         ]
     }
